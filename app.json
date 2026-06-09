@@ -12,5 +12,10 @@
     "android": {
       "package": "com.deeganthon.homefitproworkout"
     }
+    "extra": {
+      "eas": {
+        "projectId": "06890d88-d395-4462-9d16-52b3db037d14"
+      }
+    }
   }
 }
