@@ -1,0 +1,16 @@
+{
+  "expo": {
+    "name": "HomeFit Pro",
+    "slug": "homefit-pro-workout",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./icon.png",
+    "userInterfaceStyle": "dark",
+    "splash": {
+      "backgroundColor": "#07101f"
+    },
+    "android": {
+      "package": "com.deeganthon.homefitproworkout"
+    }
+  }
+}
