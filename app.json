@@ -1,7 +1,7 @@
 {
   "expo": {
     "name": "HomeFit Pro",
-    "slug": "homefit-pro-workout",
+    "slug": "workout",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./icon.png",
