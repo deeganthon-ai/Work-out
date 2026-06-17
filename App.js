@@ -255,7 +255,26 @@ export default function App(){
  useEffect(()=>{AsyncStorage.setItem(STORAGE_KEY,JSON.stringify(state)).catch(()=>{});},[state]);
  useEffect(()=>()=>timer.current&&clearInterval(timer.current),[]);
  const enabled=state.equipment.filter(e=>e.enabled).map(e=>e.name),allExercises=[...baseExercises,...state.customExercises],nextDay=['Push','Pull','Legs'][state.workouts.length%3],recovery=getRecovery(state.workouts),prs=useMemo(()=>getPRs(state.workouts),[state.workouts]),weeklyVolume=volumeLast7(state.workouts),weekStats=getWeekStats(state.workouts),draftVolume=workoutVolume(workoutDraft);
- const exerciseDatabase=allExercises.filter(e=>(muscleFilter==='all'||e.muscle===muscleFilter)).filter(e=>(e.name+' '+e.day+' '+e.muscle+' '+e.group+' '+e.equipment.join(' ')).toLowerCase().includes(exerciseQuery.toLowerCase())).slice(0,250);
+ const currentSwap = swapIndex !== null ? workoutDraft[swapIndex] : null;
+
+const exerciseDatabase = allExercises
+  .filter(e => {
+    if (currentSwap) {
+      return (
+        e.name !== currentSwap.name &&
+        e.day === currentSwap.day &&
+        e.group === currentSwap.group &&
+        e.equipment.every(eq => enabled.includes(eq))
+      );
+    }
+    return muscleFilter === 'all' || e.muscle === muscleFilter;
+  })
+  .filter(e =>
+    (e.name + ' ' + e.day + ' ' + e.muscle + ' ' + e.group + ' ' + e.equipment.join(' '))
+      .toLowerCase()
+      .includes(exerciseQuery.toLowerCase())
+  )
+  .slice(0,250);
  useEffect(()=>setWorkoutDraft(generateWorkout({day:nextDay,allExercises,enabled,workouts:state.workouts,goal:state.goal,priorities:state.priorities,recovery})),[nextDay,enabled.join('|'),state.goal,state.customExercises.length]);
  function patch(p){setState(s=>({...s,...p}));}
  function makeDraft(e){const kg=suggestKg(e,state.workouts),g=goals.find(x=>x.key===state.goal)||goals[3],sets=Math.max(1,e.sets+(g.sets||0)),rest=g.rest||e.rest;return{...e,sets,rest,suggestedKg:kg,setsDone:Array.from({length:sets},()=>({kg,reps:e.targetReps,rest}))};}
