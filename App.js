@@ -278,7 +278,18 @@ const exerciseDatabase = allExercises
  useEffect(()=>setWorkoutDraft(generateWorkout({day:nextDay,allExercises,enabled,workouts:state.workouts,goal:state.goal,priorities:state.priorities,recovery})),[nextDay,enabled.join('|'),state.goal,state.customExercises.length]);
  function patch(p){setState(s=>({...s,...p}));}
  function makeDraft(e){const kg=suggestKg(e,state.workouts),g=goals.find(x=>x.key===state.goal)||goals[3],sets=Math.max(1,e.sets+(g.sets||0)),rest=g.rest||e.rest;return{...e,sets,rest,suggestedKg:kg,setsDone:Array.from({length:sets},()=>({kg,reps:e.targetReps,rest}))};}
- function updateSet(i,j,k,v){setWorkoutDraft(w=>w.map((e,ei)=>ei!==i?e:{...e,setsDone:e.setsDone.map((s,si)=>si!==j?s:{...s,[k]:v})}));}
+ function logSet(i,j){
+  let rest=90;
+  setWorkoutDraft(w=>w.map((e,ei)=>{
+    if(ei!==i)return e;
+    rest=e.rest||90;
+    return{
+      ...e,
+      setsDone:e.setsDone.map((s,si)=>si!==j?s:{...s,done:true})
+    };
+  }));
+  startRest(rest);
+ }
  function startRest(sec){if(timer.current)clearInterval(timer.current);setSeconds(sec);timer.current=setInterval(()=>setSeconds(x=>{if(x<=1){clearInterval(timer.current);timer.current=null;return 0;}return x-1;}),1000);}
  function addExercise(e){const item=makeDraft(e);setWorkoutDraft(w=>insertIndex===null?[...w,item]:[...w.slice(0,insertIndex+1),item,...w.slice(insertIndex+1)]);setInsertIndex(null);setShowDatabase(false);}
  function swapExercise(i,e){setWorkoutDraft(w=>w.map((old,x)=>x===i?makeDraft(e):old));setSwapIndex(null);setShowDatabase(false);}
